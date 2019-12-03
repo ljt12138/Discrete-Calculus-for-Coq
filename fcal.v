@@ -342,7 +342,7 @@ Section PartialSum_Delta.
 
   Lemma Delta_inv : forall L, 
     Δ[Σ[L]] = L.
-  Proof.    
+  Proof.
     intros L.
     unfold Delta.
     rewrite Sub_app_distr.
