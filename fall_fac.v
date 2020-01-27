@@ -1,14 +1,12 @@
 Add LoadPath "C:\Users\ljt12138\Desktop\2019秋\Coq\Discrete-Calculus-for-Coq".
 Require Import Reals.
 Require Import omega.Omega.
+Require Import Lra.
 Require Export fcal.
-Open Scope R_scope.
+Require Export seq_detail.
+Require Export n2r.
 
-Fixpoint N2R (n : nat) :=
-  match n with 
-  | O => 0
-  | S n' => 1 + (N2R n')
-  end.
+Open Scope R_scope.
 
 Fixpoint Ffac (n : nat) (x : nat) :=
   match n with
@@ -16,14 +14,8 @@ Fixpoint Ffac (n : nat) (x : nat) :=
   | S n' => N2R(x) * (Ffac n' (x - 1))
   end.
 
-Fixpoint Npow (n : nat) (x : R) :=
-  match n with 
-  | O => 1
-  | S n' => x * (Npow n' x)
-  end.
 
 Notation "[ x ] ^n" := (pow x) (at level 19).
-Notation "x^ [ n ]" := (fun (x : nat) => Npow x n) (at level 19).
 Notation "x↓ [ n ]" := (Ffac n) (at level 19).
 Notation "[ x ] ↓n" := (fun n => Ffac n x) (at level 19).
 
@@ -109,21 +101,30 @@ Section Ffac_lemma.
           reflexivity.
   Qed.
 
+  Corollary PSum_Ffac : forall n,
+    Σ[x↓[n]] = (1/N2R(S n)) \* x↓[S n].
+  Proof.
+    intros n.
+    assert (x↓[n] = (1/N2R(S n)) \* Δ[x↓[S n]]) as H.
+    {
+      rewrite Delta_Ffac.
+      trivial_seq.
+      rewrite <- Rmult_assoc ; simpl.
+      assert (n - 0 = n)%nat as H1. omega. rewrite H1.
+      field. (* only need to prove 1 + N2R n <> 0 *)
+      assert (N2R n >= 0) as H2. apply N2R_ge_0.
+      lra.
+    }
+    assert (x↓[n] = Δ[(1/N2R(S n)) \* (x↓[S n])]) as H1.
+    {
+      rewrite H.
+      symmetry.
+      apply linear_scale_weaken.
+      apply Delta_linear.      
+    }
+    rewrite H1.
+    rewrite Sigma_inv.
+    trivial_op ; trivial_seq. simpl. ring.
+  Qed.
+  
 End Ffac_lemma.
-
-Section Npow_lemma.
-
-End Npow_lemma.
-
-Section Nexp_lemma.
-
-Lemma Delta_fixpoint : Δ[[2]^n] = [2]^n.
-Proof.
-  unfold Delta.
-  rewrite Sub_app_distr.
-  unfold Id.
-  trivial_seq ; unfold E ; simpl.
-  field.
-Qed.
-
-End Nexp_lemma.

@@ -20,7 +20,7 @@ Definition Dot (L L' : Sequence) :=
 Definition Zs : Sequence := fun n => 0.
 Definition Os : Sequence := fun n => 1.
 Definition Is : Sequence := fun n => INR n.
-Definition Î´ : Sequence := fun n => 
+Definition ¦Ä : Sequence := fun n => 
     match n with 
     | O => 1
     | S n' => 0
@@ -279,26 +279,26 @@ Section Operator_lemma.
   Qed.
 End Operator_lemma.
 
-Notation "Î”[ L ]" := (Delta L) (at level 5, no associativity).
+Notation "¦¤[ L ]" := (Delta L) (at level 5, no associativity).
 
 Section Delta_lemma.
 
   Lemma Delta_add : forall L L',
-    Î”[L \+ L'] = Î”[L] \+ Î”[L'].
+    ¦¤[L \+ L'] = ¦¤[L] \+ ¦¤[L'].
   Proof.
     apply linear_add_weaken.
     apply Delta_linear.
   Qed.
   
   Lemma Delta_scale : forall c L,
-    Î”[c \* L] = c \* Î”[L].
+    ¦¤[c \* L] = c \* ¦¤[L].
   Proof.
     apply linear_scale_weaken.
     apply Delta_linear.
   Qed.
 
   Lemma Delta_dot : forall (U V : Sequence),
-    Î”[U \o V] = U \o Î”[V] \+ (E[V]) \o Î”[U].
+    ¦¤[U \o V] = U \o ¦¤[V] \+ (E[V]) \o ¦¤[U].
   Proof.
     intros U V.
     unfold Delta.
@@ -321,7 +321,7 @@ Fixpoint PartialSum (L : Sequence) (n : nat) :=
   | S n => (PartialSum L n) + (L n)
   end.
 
-Notation "Î£[ L ]" := (PartialSum L) (at level 5, no associativity).
+Notation "¦²[ L ]" := (PartialSum L) (at level 5, no associativity).
 
 Section PartialSum_Delta.
 
@@ -334,14 +334,14 @@ Section PartialSum_Delta.
   Proof. trivial_seq. Qed.
 
   Lemma PartialSum_minus : forall L n,
-    Î£[L][S n] - Î£[L][n] = L n.
+    ¦²[L][S n] - ¦²[L][n] = L n.
   Proof.
     intros L n.
     induction n ; simpl ; field. 
   Qed.
 
   Lemma Delta_inv : forall L, 
-    Î”[Î£[L]] = L.
+    ¦¤[¦²[L]] = L.
   Proof.
     intros L.
     unfold Delta.
@@ -353,7 +353,7 @@ Section PartialSum_Delta.
   Qed.
 
   Corollary Delta_both_side : forall L L',
-    Î£[L] = L' -> L = Î”[L'].
+    ¦²[L] = L' -> L = ¦¤[L'].
   Proof.
     intros L L' H.
     rewrite <- H.
@@ -372,7 +372,7 @@ Section PartialSum_Delta.
   Qed.    
 
   Lemma PartialSum_split_minus : forall L U,
-    Î£[L \- U] = Î£[L] \- Î£[U].
+    ¦²[L \- U] = ¦²[L] \- ¦²[U].
   Proof.
     intros L U.
     apply linear_minus_weaken.
@@ -384,7 +384,7 @@ Section PartialSum_Delta.
   Proof. intros ; field. Qed.
 
   Lemma Sigma_inv : forall L, 
-    Î£[Î”[L]] = L \- (L[0%nat] \* Os).
+    ¦²[¦¤[L]] = L \- (L[0%nat] \* Os).
   Proof.    
     intros L.
     unfold Os.
@@ -402,7 +402,7 @@ Section PartialSum_Delta.
       field.
   Qed.
 
-  Lemma PSum_delta_Os : Î£[Î´] = Os \- Î´.
+  Lemma PSum_delta_Os : ¦²[¦Ä] = Os \- ¦Ä.
   Proof.
     trivial_seq.
     induction n.
@@ -411,7 +411,7 @@ Section PartialSum_Delta.
       field.
   Qed.
   
-  Lemma Delta_Is_Os : Î”[Is] = Os.
+  Lemma Delta_Is_Os : ¦¤[Is] = Os.
   Proof. 
     unfold Os ; unfold Is ; unfold Delta.
     trivial_op.
@@ -420,7 +420,7 @@ Section PartialSum_Delta.
     simpl ; ring.
   Qed.
 
-  Lemma PSum_Os_Is : Î£[Os] = Is.
+  Lemma PSum_Os_Is : ¦²[Os] = Is.
   Proof.
     rewrite <- Delta_Is_Os.
     rewrite Sigma_inv.
